@@ -33,7 +33,7 @@
   align-items: center !important;
   justify-content: center !important;
   flex-direction: column !important;
-  transition: opacity 0.7s ease, visibility 0.7s ease !important;
+  transition: opacity 0.25s ease, visibility 0.25s ease !important;
 }
 #page-loader.hide {
   opacity: 0 !important;
@@ -76,7 +76,7 @@
   width: 0% !important;
   background: linear-gradient(90deg, #F5A623, #FFC83B) !important;
   border-radius: 3px !important;
-  animation: loaderProgress 2s cubic-bezier(0.4,0,0.2,1) forwards !important;
+  animation: loaderProgress 0.35s cubic-bezier(0.4,0,0.2,1) forwards !important;
 }
 @keyframes loaderProgress {
   0%   { width: 0%; }
@@ -1852,12 +1852,19 @@
 /* ══ PAGE LOADER ══ */
 (function(){
   var loader = document.getElementById('page-loader');
-  // Hide loader after progress animation (~2.1s)
-  setTimeout(function(){
-    if(loader) loader.classList.add('hide');
-    // After loader hides, trigger stats counter
-    setTimeout(startCounters, 400);
-  }, 2200);
+  function dismissLoader(){
+    if(loader && !loader.classList.contains('hide')){
+      loader.classList.add('hide');
+      setTimeout(startCounters, 150);
+    }
+  }
+  if(document.readyState === 'complete'){
+    dismissLoader();
+  } else {
+    window.addEventListener('load', function(){ setTimeout(dismissLoader, 100); });
+    setTimeout(dismissLoader, 400);
+  }
+  if(loader) loader.addEventListener('click', dismissLoader);
 })();
 
 /* ══ STATS COUNTER ══ */
